@@ -1,0 +1,4 @@
+
+def lose():
+    print('lose')
+        
