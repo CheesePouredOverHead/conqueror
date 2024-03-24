@@ -5,10 +5,10 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel,QVBoxLayou
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QRect
 from generate import generate
-from PyQt6.QtWidgets import QMessageBox, QApplication,QDialogButtonBox
+from PyQt6.QtWidgets import QMessageBox, QApplication,QDialogButtonBox,QComboBox
 from PyQt6.QtCore import QCoreApplication,QTimer
 from PyQt6.QtCore import Qt
-import gc
+from ai import ai
 
 
 class InputCapacity:
@@ -27,7 +27,7 @@ class InputCapacity:
         self.input.move(50,60)
         self.input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         self.input.show()
-        self.input.editingFinished.connect(self.convey)
+        # self.input.editingFinished.connect(self.convey)
 
         self.txt2 = QLabel('设置层数：', self.w)
         self.txt2.move(50,120)
@@ -38,7 +38,7 @@ class InputCapacity:
         self.input2.move(50,140)
         self.input2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         self.input2.show()
-        self.input2.editingFinished.connect(self.convey2)
+        # self.input2.editingFinished.connect(self.convey2)
 
         self.label_3 = QLabel('从第1层开始每层牌数：', self.w)
         self.label_3.setGeometry(QRect(50, 180, 351, 16))
@@ -56,12 +56,21 @@ class InputCapacity:
         self.input3.setGeometry(50,70,150,30)
         self.input3.move(50,220)
         self.input3.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
-        self.input3.editingFinished.connect(self.convey3)
+        # self.input3.editingFinished.connect(self.convey3)
         self.input3.show()
 
+        self.comboBox = QComboBox(self.w)
+        self.comboBox.addItem("手动模式")
+        self.comboBox.addItem("自动模式")
+        self.comboBox.setGeometry(QRect(50, 260, 101, 31))
+
+        self.ok = QPushButton("ok",self.w)
+        self.ok.setGeometry(QRect(50, 300, 75, 24))
+        self.ok.clicked.connect(self.convey)
+                                    
         self.w.show()
 
-    def convey(self):
+    def convey1(self):
         stack.capacity = int(self.input.text())
 
     def convey2(self):
@@ -77,9 +86,24 @@ class InputCapacity:
             pile.cardnumber=lst
             pile.inside=sum(lst)
             pile.setting=sum(lst)
-            self.w.deleteLater()
-            # self.app.deleteLater()
-            QApplication.processEvents()
+            
+
+    def convey4(self):
+        if self.comboBox.currentText()=='手动模式':
+            ai.work=False
+            print(ai.work)
+        else:
+            ai.work=True
+            print(ai.work)
+
+    def convey(self):
+        self.convey1()
+        self.convey2()
+        self.convey3()
+        self.convey4()
+        self.w.deleteLater()
+        # self.app.deleteLater()
+        # QApplication.processEvents()
 
 
     def run(self):
@@ -105,12 +129,14 @@ class Play:
         stackk.setStyleSheet("border: 2px solid black;")
         self.w.show()
         generate(self.w)
-
+        if ai.work:
+            QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
         
         self.app.exec()
 
     def win(self):
         print('win')
+        ai.on_going=False
         self.label = QLabel('你赢了', self.w)
         self.label.setGeometry(QRect(190, 140, 120, 50))
         font = QFont()
@@ -132,6 +158,7 @@ class Play:
 
     def lose(self):
         print('lose')
+        ai.on_going=False
         self.label = QLabel('你输了', self.w)
         self.label.setGeometry(QRect(190, 140, 120, 50))
         font = QFont()

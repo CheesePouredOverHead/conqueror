@@ -17,6 +17,9 @@ class Card:
         self.up=[]
         self.below=[]
 
+    def __lt__(self, other):
+        return self.no < other.no
+
     def get_no(self):
         if not self.cansee:
             return 'X'
@@ -77,6 +80,7 @@ class Card:
                 belows.up.remove(self)
             for card in pile.lst:
                 card.display()
+        # QApplication.processEvents()
 
     def detect(self):
         up=[]

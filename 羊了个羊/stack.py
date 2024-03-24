@@ -1,3 +1,4 @@
+from PyQt6.QtWidgets import QApplication
 class Stack:
     def __init__(self,capacity):
         self.capacity=capacity
@@ -31,16 +32,18 @@ class Stack:
 
     def eliminate(self,to_delete):
         for index in to_delete:
-            self.lst[index].btn.deleteLater()
+            self.lst[index].btn.hide()
+            
         self.lst = [self.lst[i] for i in range(len(self.lst)) if i not in to_delete]
+        # QApplication.processEvents()
         for no, indices in self.dic.items():
             self.dic[no] = [i for i in indices if i not in to_delete]
             self.dic[no] = [i - len([j for j in to_delete if j < i]) for i in self.dic[no]]
         for index_after in range(len(self.lst)):
             self.lst[index_after].move(index_after)
-
+        # QApplication.processEvents()
 #暂存区默认设为7，后续再自定义
-stack=Stack(7)
+stack=Stack(7) 
 
 class Pile:
     def __init__(self):
