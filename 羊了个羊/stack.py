@@ -32,7 +32,6 @@ class Stack:
     def eliminate(self,to_delete):
         for index in to_delete:
             self.lst[index].btn.deleteLater()
-            print(f'eliminate {self.lst[index].no} at {index}')
         self.lst = [self.lst[i] for i in range(len(self.lst)) if i not in to_delete]
         for no, indices in self.dic.items():
             self.dic[no] = [i for i in indices if i not in to_delete]
@@ -58,7 +57,8 @@ class Pile:
         self.judge()
         
     def judge(self):
-        self.on_win()
+        if self.inside==0:
+            self.on_win()
     
     def detect(self):
         for card in pile.lst:
@@ -68,7 +68,6 @@ class Pile:
                     rect1=other.btn.geometry()
                     if rect.intersects(rect1) :
                         card.up.append(other)
-                        print(card.no,card.floor,'under',other.no,other.floor)
                         other.below.append(card)
     
 pile=Pile()

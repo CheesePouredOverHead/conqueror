@@ -133,11 +133,12 @@ class Play:
     def lose(self):
         print('lose')
         self.label = QLabel('你输了', self.w)
-        self.label.setGeometry(QRect(200, 140, 100, 50))
+        self.label.setGeometry(QRect(190, 140, 120, 50))
         font = QFont()
         font.setPointSize(28)
         font.setBold(True)
         self.label.setFont(font)
+        self.label.setStyleSheet("background-color: white;")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.show()
 

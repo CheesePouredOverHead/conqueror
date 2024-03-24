@@ -4,7 +4,6 @@ import random
 
 def generate(w):
     cards=all_card()
-    print(cards)
     for floor in range(pile.floor,0,-1):
         this_floor=[(x,y) for x in range(225-floor*25,225-floor*25+50*floor+1,50) for y in range(165-25*floor,165-25*floor+50*floor+1,50)]
         random.shuffle(this_floor)
