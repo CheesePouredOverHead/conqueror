@@ -1,4 +1,0 @@
-
-def lose():
-    print('lose')
-        

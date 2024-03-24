@@ -1,23 +1,10 @@
 from card import Card
 from stack import pile
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel,QHBoxLayout
 import random
 
 def generate(w):
-    
-    """for i in range(4):
-        pile.lst.append(Card(1,2,75+50*i,75,w))
-        pile.inside+=1
-    for i in range(5):
-        pile.lst.append(Card(1,1,50+50*i,50,w))
-        pile.inside+=1
-    pile.detect()
-    layout = QHBoxLayout()
-    for x in range(pile.floor,0,-1):
-        for card in pile.lst:
-            if card.floor==x:
-                card.display()"""
     cards=all_card()
+    print(cards)
     for floor in range(pile.floor,0,-1):
         this_floor=[(x,y) for x in range(225-floor*25,225-floor*25+50*floor+1,50) for y in range(165-25*floor,165-25*floor+50*floor+1,50)]
         random.shuffle(this_floor)
@@ -29,7 +16,7 @@ def generate(w):
         card.display()
             
 def all_card():
-    n = pile.inside  # 请根据实际情况修改这个值
+    n = pile.inside  
 
     lst = []
     for i in range(10):

@@ -5,17 +5,18 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel,QVBoxLayou
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QRect
 from generate import generate
-from PyQt6.QtWidgets import QMessageBox, QApplication
-from PyQt6.QtCore import QCoreApplication
+from PyQt6.QtWidgets import QMessageBox, QApplication,QDialogButtonBox
+from PyQt6.QtCore import QCoreApplication,QTimer
+from PyQt6.QtCore import Qt
+import gc
 
 
-class InputCapacity:  # 请将 MyClass 替换为您的类名
-    def __init__(self):
-        self.app = QApplication(sys.argv)
+class InputCapacity:
+    def __init__(self,app):
+        self.app=app
         self.w = QWidget()
         self.w.setWindowTitle('自定义设置')
         self.w.setFixedSize(500, 500)
-        # w.show()
 
         self.txt = QLabel('设置暂存区容量：', self.w)
         self.txt.move(50,40)
@@ -75,19 +76,26 @@ class InputCapacity:  # 请将 MyClass 替换为您的类名
         else:
             pile.cardnumber=lst
             pile.inside=sum(lst)
-            self.w.close()
+            pile.setting=sum(lst)
+            self.w.deleteLater()
+            # self.app.deleteLater()
+            QApplication.processEvents()
+
 
     def run(self):
         self.app.exec()
 
+    def delete_all_widgets(self):
+        for widget in self.w.findChildren(QWidget):
+            widget.deleteLater()
+        QApplication.processEvents()
+
 class Play:
-    def __init__(self):
-        self.app = QApplication(sys.argv)
-        self.pile = Pile()
-        self.pile.on_win = self.win
+    def __init__(self,app):
+        self.app=app
 
     def play(self):
-
+        
         self.w = QWidget()
         self.w.setWindowTitle('羊了个羊')
         self.w.setFixedSize(500, 500)
@@ -98,22 +106,49 @@ class Play:
         self.w.show()
         generate(self.w)
 
-        sys.exit(self.app.exec()) 
+        
+        self.app.exec()
 
     def win(self):
-        msgBox = QMessageBox()
-        msgBox.setText("你赢了")
-        retryButton = msgBox.addButton("再来一局", QMessageBox.AcceptRole)
-        quitButton = msgBox.addButton("退出程序", QMessageBox.RejectRole)
-        msgBox.exec()
+        print('win')
+        self.label = QLabel('你赢了', self.w)
+        self.label.setGeometry(QRect(190, 140, 120, 50))
+        font = QFont()
+        font.setPointSize(28)
+        font.setBold(True)
+        self.label.setFont(font)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.show()
 
-        if msgBox.clickedButton() == retryButton:
-            # 如果点击了 "再来一局"，则重新开始游戏
-            self.restart_game()
-        elif msgBox.clickedButton() == quitButton:
-            # 如果点击了 "退出程序"，则退出程序
-            QCoreApplication.instance().quit()
+        """self.regame = QPushButton('再来一局',self.w)
+        self.regame.setGeometry(QRect(210, 200, 80, 30))
+        self.regame.clicked.connect(self.replay)
+        self.regame.show()"""
 
+        self.quit = QPushButton('退出程序',self.w)
+        self.quit.setGeometry(QRect(210, 240, 80, 30))
+        self.quit.show()
+        self.quit.clicked.connect(QCoreApplication.quit)
 
+    def lose(self):
+        print('lose')
+        self.label = QLabel('你输了', self.w)
+        self.label.setGeometry(QRect(200, 140, 100, 50))
+        font = QFont()
+        font.setPointSize(28)
+        font.setBold(True)
+        self.label.setFont(font)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.show()
 
+        """self.regame = QPushButton('再来一局',self.w)
+        self.regame.setGeometry(QRect(210, 200, 80, 30))
+        self.regame.clicked.connect(self.replay)
+        self.regame.show()"""
 
+        self.quit = QPushButton('退出程序',self.w)
+        self.quit.setGeometry(QRect(210, 240, 80, 30))
+        self.quit.show()
+        self.quit.clicked.connect(QCoreApplication.quit)
+
+        
