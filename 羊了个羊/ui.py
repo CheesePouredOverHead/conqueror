@@ -117,10 +117,11 @@ class InputCapacity:
 class Play:
     def __init__(self,app):
         self.app=app
+        self.w = QWidget()
 
     def play(self):
         
-        self.w = QWidget()
+        
         self.w.setWindowTitle('羊了个羊')
         self.w.setFixedSize(500, 500)
         stackk=QLabel('',self.w)
@@ -131,7 +132,7 @@ class Play:
         generate(self.w)
         if ai.work:
             QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
-        
+            # ai.greedy()
         self.app.exec()
 
     def win(self):

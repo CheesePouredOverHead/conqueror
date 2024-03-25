@@ -15,7 +15,7 @@ def generate(w):
         card.display()
             
 def all_card():
-    n = pile.inside  
+    n = pile.setting 
 
     lst = []
     for i in range(10):
