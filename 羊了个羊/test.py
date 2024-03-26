@@ -15,10 +15,10 @@ class test:
             stack.dic={i:[] for i in range(10)} 
             stack.lst=[]
             pile.lst=[]
-            pile.floor=2
-            pile.cardnumber=[4,8]
-            pile.setting=12
-            pile.inside=12
+            pile.floor=4
+            pile.cardnumber=[4,9,16,25]
+            pile.setting=54
+            pile.inside=54
 
         
             ai.work=True
@@ -35,6 +35,7 @@ class test:
             # Destroy the Play instance
             begin = None
             ai.on_going = True
+            print(i,'end')
 
         print(self.count/num)
         QCoreApplication.quit()
@@ -56,6 +57,6 @@ class test:
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     test1=test()
-    test1.test(100,app)
+    test1.test(10,app)
     app.exec()
     

@@ -25,8 +25,11 @@ def all_card():
         lst += [i] * count
 
 # 如果生成的列表的元素个数超过了 n，我们需要删除一些元素
-    if len(lst) > n:
-        lst = lst[:n]
+    while len(lst)!=n:
+        if len(lst) > n:
+            lst = lst[:n]
+        else:
+            lst=lst+lst[:n-len(lst)]
 
     # 打乱列表的顺序
     random.shuffle(lst)

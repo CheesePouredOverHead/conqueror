@@ -21,33 +21,36 @@ class AI:
         self.can_move=[card for card in pile.lst if card.up==[]]
         while self.can_move and self.on_going:
             self.can_see=[card for card in pile.lst if card.cansee]
-            # score=[(self.score(card),card) for card in self.can_move]
-            score=[(self.score2(1,card,copy.copy(self.can_move),copy.copy(self.can_see)),card) for card in self.can_move]
+            # score=[(self.score(card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic)),card) for card in self.can_move]
+            score=[(self.score2(1,card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic)),card) for card in self.can_move]
             score.sort(reverse=True)
+            print([(score,card.get_no()) for score,card in score])
             score[0][1].move()
             QApplication.processEvents()
-            # time.sleep(1)
+            time.sleep(1)
             self.can_move=[card for card in pile.lst if card.up==[]]
         
 
-    def score(self,card):
-        if stack.dic[int(card.get_no())]==2:
-            return 5
-        if len([others for others in self.can_move if others.get_no()==card.get_no()])==3:
-            return 4
-        if stack.dic[int(card.get_no())]==1:
-            for another in self.can_see:
-                if another.get_no()==card.get_no() and another.up==[]:
+    def score(self,card,canmove,cansee,dicc):
+        if len(dicc[int(card.get_no())])%3==2:
+            return 10
+        if len([others for others in canmove if others.get_no()==card.get_no()])%3==0:
+            return 6
+        if len(dicc[int(card.get_no())])%3==1:
+            for another in cansee:
+                if another.get_no()==card.get_no() and another in canmove:
                     return 4
                 if another.get_no()==card.get_no() and card in another.up:
                     return 3
         return 0
     
-    def score2(self,step,card,canmove,cansee):
+    def score2(self,step,card,canmove,cansee,dicc):
+        canmove = canmove.copy()
+        cansee = cansee.copy()
         if step==3:
-            return self.score(card)
+            return 0.5*self.score(card,canmove,cansee,dicc)
         elif canmove==[card]:
-            return self.score(card)
+            return self.score(card,canmove,cansee,dicc)
         else:
             for cards in card.below:
                 if cards.up==[card]:
@@ -55,11 +58,14 @@ class AI:
 
                 if not cards.cansee:
                     cansee+=[cards]
+            x=self.score(card,canmove,cansee,dicc)
             canmove.remove(card)
             cansee.remove(card)
-            return self.score(card)+max([self.score2(step+1,another,canmove,cansee) for another in canmove])
-        
-        
+            dicc[int(card.get_no())].append(stack.inside+step)
+            if step==1:
+                return x+max([self.score2(step+1,another,canmove,cansee,copy.deepcopy(dicc)) for another in canmove])
+            else:
+                return 0.7*x+max([self.score2(step+1,another,canmove,cansee,copy.deepcopy(dicc)) for another in canmove])
 
 
 ai=AI()
