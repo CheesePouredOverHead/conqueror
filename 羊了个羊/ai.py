@@ -1,5 +1,5 @@
 from stack import pile,stack
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
+from PyQt6.QtWidgets import QApplication, QWidget
 import copy
 import time
 
@@ -24,10 +24,10 @@ class AI:
             # score=[(self.score(card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic)),card) for card in self.can_move]
             score=[(self.score2(1,card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic)),card) for card in self.can_move]
             score.sort(reverse=True)
-            print([(score,card.get_no()) for score,card in score])
+            # print([(score,card.get_no()) for score,card in score])
             score[0][1].move()
             QApplication.processEvents()
-            time.sleep(1)
+            time.sleep(0.5)
             self.can_move=[card for card in pile.lst if card.up==[]]
         
 

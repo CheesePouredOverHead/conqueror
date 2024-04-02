@@ -1,7 +1,7 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
-from PyQt6.QtGui import QFont,QColor,QPolygonF
-from PyQt6.QtCore import QRect,QPoint,QPointF,Qt
+from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtGui import QFont,QPolygonF
+from PyQt6.QtCore import QPointF,Qt
 from stack import stack,pile
 
 class Card:
@@ -27,7 +27,6 @@ class Card:
             return str(self.no)
 
     def display(self):
-        # self.floor,self.cansee=self.detect()
         self.can_see()
         self.btn.setText(self.get_no())
         font = QFont("Arial", 15)  # 创建字体对象，设置字体为Arial，大小为12
@@ -56,7 +55,7 @@ class Card:
 
     def color(self,no):
         dic={0:'white',1:'red',2:'blue',3:'orange',4:'yellow',\
-             5:'green',6:'purple',7:'grey',8:'cyan',9:'pink'}
+             5:'seagreen',6:'blueviolet',7:'tomato',8:'cyan',9:'pink'}
         if self.cansee:
             return dic[no]
         else:
@@ -82,24 +81,4 @@ class Card:
                 card.display()
         # QApplication.processEvents()
 
-    def detect(self):
-        up=[]
-        rect = self.btn.geometry()
-        polygon=QPolygonF([QPointF(rect.topLeft()),QPointF(rect.topRight()),QPointF(rect.bottomRight()),QPointF(rect.bottomLeft())])
-        points = [QPointF(0, 0)]
-        superpolygon = QPolygonF(points)
-        for other in pile.lst:
-            if other!=self:
-                rect1=other.btn.geometry()
-                polygon1=QPolygonF([QPointF(rect1.topLeft()),QPointF(rect1.topRight()),QPointF(rect1.bottomRight()),QPointF(rect1.bottomLeft())])
-                if rect.intersects(rect1) and other.floor<self.floor:
-                    up.append(other)
-                    superpolygon=superpolygon.united(polygon1)
-        
-        if all(superpolygon.containsPoint(point, Qt.FillRule.OddEvenFill) for point in polygon):
-            return 1+len(up),False
-        else:
-            return 1+len(up),True
-    
-    
 

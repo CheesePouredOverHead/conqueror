@@ -1,5 +1,5 @@
 import sys
-from ui import InputCapacity,Play
+from ui import Setting,Play
 from stack import stack,pile
 from generate import *
 from PyQt6.QtWidgets import QApplication
@@ -8,8 +8,8 @@ from PyQt6.QtWidgets import QApplication
 def main():
     app = QApplication(sys.argv)
 
-    input_capacity=InputCapacity(app)
-    input_capacity.run()
+    setting=Setting(app)
+    setting.run()
     
     begin=Play(app)
     pile.on_win=begin.win

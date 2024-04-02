@@ -1,4 +1,3 @@
-from PyQt6.QtWidgets import QApplication
 class Stack:
     def __init__(self,capacity):
         self.capacity=capacity
@@ -51,7 +50,6 @@ class Pile:
         self.setting=0
         self.lst=[]
         self.floor=2
-        self.cardnumber=[]
         self.on_win = None
 
     def move(self,card):

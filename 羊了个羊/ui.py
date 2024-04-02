@@ -1,17 +1,17 @@
 import sys
 from PyQt6 import QtWidgets
-from stack import stack,pile,Pile
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel,QVBoxLayout
+from stack import stack,pile
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QRect
 from generate import generate
-from PyQt6.QtWidgets import QMessageBox, QApplication,QDialogButtonBox,QComboBox
+from PyQt6.QtWidgets import QApplication,QComboBox
 from PyQt6.QtCore import QCoreApplication,QTimer
 from PyQt6.QtCore import Qt
 from ai import ai
 
 
-class InputCapacity:
+class Setting:
     def __init__(self,app):
         self.app=app
         self.w = QWidget()
@@ -82,26 +82,29 @@ class InputCapacity:
             self.label_5 = QLabel('请重新输入', self.w)
             self.label_5.setGeometry(QRect(50, 250, 351, 16))
             self.label_5.show()
+            return False
+            # QApplication.processEvents()
         else:
             pile.cardnumber=lst
             pile.inside=sum(lst)
             pile.setting=sum(lst)
-            
+            return True
 
     def convey4(self):
         if self.comboBox.currentText()=='手动模式':
             ai.work=False
-            print(ai.work)
+            # print(ai.work)
         else:
             ai.work=True
-            print(ai.work)
+            # print(ai.work)
 
     def convey(self):
         self.convey1()
         self.convey2()
-        self.convey3()
+        flag=self.convey3()
         self.convey4()
-        self.w.deleteLater()
+        if flag:
+            self.w.deleteLater()
         # self.app.deleteLater()
         # QApplication.processEvents()
 
