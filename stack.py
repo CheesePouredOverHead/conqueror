@@ -40,7 +40,6 @@ class Stack:
             self.dic[no] = [i - len([j for j in to_delete if j < i]) for i in self.dic[no]]
         for index_after in range(len(self.lst)):
             self.lst[index_after].move(index_after)
-        # QApplication.processEvents()
 #暂存区默认设为7，后续再自定义
 stack=Stack(7) 
 

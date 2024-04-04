@@ -79,6 +79,5 @@ class Card:
                 belows.up.remove(self)
             for card in pile.lst:
                 card.display()
-        # QApplication.processEvents()
 
 

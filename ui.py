@@ -1,13 +1,9 @@
-import sys
 from PyQt6 import QtWidgets
 from stack import stack,pile
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton,QLabel,QComboBox
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import QRect
+from PyQt6.QtCore import QRect,QCoreApplication,QTimer,Qt
 from generate import generate
-from PyQt6.QtWidgets import QApplication,QComboBox
-from PyQt6.QtCore import QCoreApplication,QTimer
-from PyQt6.QtCore import Qt
 from ai import ai
 
 
@@ -27,7 +23,6 @@ class Setting:
         self.input.move(50,60)
         self.input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         self.input.show()
-        # self.input.editingFinished.connect(self.convey)
 
         self.txt2 = QLabel('设置层数：', self.w)
         self.txt2.move(50,120)
@@ -56,7 +51,6 @@ class Setting:
         self.input3.setGeometry(50,70,150,30)
         self.input3.move(50,220)
         self.input3.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
-        # self.input3.editingFinished.connect(self.convey3)
         self.input3.show()
 
         self.comboBox = QComboBox(self.w)
@@ -83,7 +77,6 @@ class Setting:
             self.label_5.setGeometry(QRect(50, 250, 351, 16))
             self.label_5.show()
             return False
-            # QApplication.processEvents()
         else:
             pile.cardnumber=lst
             pile.inside=sum(lst)
@@ -93,10 +86,8 @@ class Setting:
     def convey4(self):
         if self.comboBox.currentText()=='手动模式':
             ai.work=False
-            # print(ai.work)
         else:
             ai.work=True
-            # print(ai.work)
 
     def convey(self):
         self.convey1()
@@ -105,8 +96,6 @@ class Setting:
         self.convey4()
         if flag:
             self.w.deleteLater()
-        # self.app.deleteLater()
-        # QApplication.processEvents()
 
 
     def run(self):
@@ -135,7 +124,6 @@ class Play:
         generate(self.w)
         if ai.work:
             QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
-            # ai.greedy()
         self.app.exec()
 
     def win(self):
@@ -149,11 +137,6 @@ class Play:
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.show()
-
-        """self.regame = QPushButton('再来一局',self.w)
-        self.regame.setGeometry(QRect(210, 200, 80, 30))
-        self.regame.clicked.connect(self.replay)
-        self.regame.show()"""
 
         self.quit = QPushButton('退出程序',self.w)
         self.quit.setGeometry(QRect(210, 240, 80, 30))
@@ -172,11 +155,6 @@ class Play:
         self.label.setStyleSheet("background-color: white;")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.show()
-
-        """self.regame = QPushButton('再来一局',self.w)
-        self.regame.setGeometry(QRect(210, 200, 80, 30))
-        self.regame.clicked.connect(self.replay)
-        self.regame.show()"""
 
         self.quit = QPushButton('退出程序',self.w)
         self.quit.setGeometry(QRect(210, 240, 80, 30))

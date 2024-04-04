@@ -19,9 +19,9 @@ class test:
             stack.lst = []
             pile.lst = []
             pile.floor = 5
-            pile.cardnumber = [4, 9, 16, 25, 36]
-            pile.setting = 90
-            pile.inside = 90
+            pile.cardnumber = [4, 9,16,25,36]
+            pile.setting = sum(pile.cardnumber)
+            pile.inside = pile.setting
 
             ai.work = True
             begin = Play(app)
@@ -57,5 +57,5 @@ class test:
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     test1 = test()
-    test1.test(10, app)
+    test1.test(20, app)
     app.exec()
