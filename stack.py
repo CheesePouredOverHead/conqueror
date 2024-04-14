@@ -50,6 +50,7 @@ class Pile:
         self.lst=[]
         self.floor=2
         self.on_win = None
+        self.cardnumber=[]
 
     def move(self,card):
         self.inside-=1

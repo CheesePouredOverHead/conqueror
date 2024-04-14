@@ -14,7 +14,7 @@ class Setting:
         self.w.setWindowTitle('自定义设置')
         self.w.setFixedSize(500, 500)
 
-        self.txt = QLabel('设置暂存区容量：', self.w)
+        self.txt = QLabel('设置暂存区容量(推荐7)：', self.w)
         self.txt.move(50,40)
         self.txt.show()
 
@@ -24,7 +24,7 @@ class Setting:
         self.input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         self.input.show()
 
-        self.txt2 = QLabel('设置层数：', self.w)
+        self.txt2 = QLabel('设置层数(1-6)：', self.w)
         self.txt2.move(50,120)
         self.txt2.show()
 
@@ -121,7 +121,7 @@ class Play:
         stackk.move(int((500-50*stack.capacity)/2),380)
         stackk.setStyleSheet("border: 2px solid black;")
         self.w.show()
-        generate(self.w)
+        generate(self.w,pile)
         if ai.work:
             QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
         self.app.exec()

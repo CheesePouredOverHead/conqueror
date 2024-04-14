@@ -3,7 +3,7 @@ from stack import pile
 import random
 
 def generate(w):
-    cards=all_card()
+    cards=all_card(pile)
     for floor in range(pile.floor,0,-1):
         this_floor=[(x,y) for x in range(225-floor*25,225-floor*25+50*floor+1,50) for y in range(165-25*floor,165-25*floor+50*floor+1,50)]
         random.shuffle(this_floor)
@@ -14,7 +14,7 @@ def generate(w):
     for card in pile.lst:
         card.display()
             
-def all_card():
+def all_card(pile):
     n = pile.setting 
 
     lst = []
@@ -30,7 +30,7 @@ def all_card():
             lst = lst[:n]
         else:
             lst=lst+lst[:n-len(lst)]
-    print(lst)
+    # print(lst)
     # 打乱列表的顺序
     random.shuffle(lst)
     return lst

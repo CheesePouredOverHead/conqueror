@@ -16,14 +16,14 @@ class AI:
     def __init__(self):
         self.work=False
         self.on_going=True
-
+    
     def greedy(self):
         self.can_move=[card for card in pile.lst if card.up==[]]
         while self.can_move and self.on_going:
             self.can_see=[card for card in pile.lst if card.cansee]
             score=[(self.score2(1,card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic),stack.capacity-stack.inside),card) for card in self.can_move]
             score.sort(reverse=True)
-            print([(score,card.get_no()) for score,card in score])
+            # print([(score,card.get_no()) for score,card in score])
             score[0][1].move()
             QApplication.processEvents()
             time.sleep(0.5)
@@ -83,6 +83,4 @@ class AI:
                 rest-=1
             return self.weight(step,x)+max([self.score2(step+1,another,copy.copy(canmove),copy.copy(cansee),copy.deepcopy(dicc),copy.copy(rest)) for another in canmove])
             
-
-
 ai=AI()
