@@ -21,8 +21,9 @@ class Card:
         return self.no < other.no
 
     def get_no(self):
+        self.can_see()
         if not self.cansee:
-            return 'X'
+            return '-1'
         else:
             return str(self.no)
 

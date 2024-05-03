@@ -18,8 +18,8 @@ class test:
             stack.dic = {i: [] for i in range(10)}
             stack.lst = []
             pile.lst = []
-            pile.floor = 5
-            pile.cardnumber = [4, 9,16,25,36]
+            pile.floor = 2
+            pile.cardnumber = [4, 8]
             pile.setting = sum(pile.cardnumber)
             pile.inside = pile.setting
 

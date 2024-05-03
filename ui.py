@@ -24,7 +24,7 @@ class Setting:
         self.input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         self.input.show()
 
-        self.txt2 = QLabel('设置层数(1-6)：', self.w)
+        self.txt2 = QLabel('设置层数：', self.w)
         self.txt2.move(50,120)
         self.txt2.show()
 
@@ -39,7 +39,7 @@ class Setting:
         self.label_3.setGeometry(QRect(50, 180, 351, 16))
         self.label_3.show()
 
-        self.label_4 = QLabel('注意：总数须为3的倍数，第i层数量不超过(i+1)^2，空格分隔',self.w)
+        self.label_4 = QLabel('注意：总数须为3的倍数，每层不超过36，总数不超过180，空格分隔',self.w)
         self.label_4.setGeometry(QRect(50, 200, 400, 16))
         font = QFont()
         font.setBold(True)
@@ -72,7 +72,7 @@ class Setting:
 
     def convey3(self):
         lst=list(map(int,self.input3.text().split()))
-        if sum(lst)%3!=0 or len(lst)!=pile.floor or any(lst[i]>(i+2)**2 for i in range(pile.floor)):
+        if sum(lst)%3!=0 or len(lst)!=pile.floor or any(lst[i]>36 for i in range(pile.floor)):
             self.label_5 = QLabel('请重新输入', self.w)
             self.label_5.setGeometry(QRect(50, 250, 351, 16))
             self.label_5.show()
@@ -121,9 +121,9 @@ class Play:
         stackk.move(int((500-50*stack.capacity)/2),380)
         stackk.setStyleSheet("border: 2px solid black;")
         self.w.show()
-        generate(self.w,pile)
+        generate(self.w)
         if ai.work:
-            QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
+            QTimer.singleShot(1000, ai.dqn_work)  # 延迟 1000 毫秒后调用 ai.greedy()
         self.app.exec()
 
     def win(self):

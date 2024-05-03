@@ -5,7 +5,10 @@ import random
 def generate(w):
     cards=all_card(pile)
     for floor in range(pile.floor,0,-1):
-        this_floor=[(x,y) for x in range(225-floor*25,225-floor*25+50*floor+1,50) for y in range(165-25*floor,165-25*floor+50*floor+1,50)]
+        if floor%2==1:
+            this_floor=[(x,y) for x in range(100,351,50) for y in range(40,291,50)]
+        else:
+            this_floor=[(x,y) for x in range(75,376,50) for y in range(15,316,50)]
         random.shuffle(this_floor)
         for i in range(pile.cardnumber[floor-1]):
             pile.lst.append(Card(cards.pop(),floor,this_floor[i][0],this_floor[i][1],w))
