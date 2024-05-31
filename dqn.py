@@ -21,9 +21,9 @@ register(
 class DQN(nn.Module):
     def __init__(self, state_size, action_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(state_size, 24)
-        self.fc2 = nn.Linear(24, 24)
-        self.fc3 = nn.Linear(24, action_size)
+        self.fc1 = nn.Linear(state_size, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, action_size)
 
     def forward(self, x):
         x = torch.relu(self.fc1(x))
@@ -34,13 +34,13 @@ class Agent:
     def __init__(self, state_size, action_size):
         self.state_size = state_size
         self.action_size = action_size
-        self.memory = deque(maxlen=2000)
-        self.gamma = 0.95
-        self.epsilon = 0.5
-        self.epsilon_min = 0.01
+        self.memory = deque(maxlen=5000)
+        self.gamma = 0.9
+        self.epsilon = 0.9
+        self.epsilon_min = 0.0001
         self.epsilon_decay = 0.995
         self.model = DQN(state_size, action_size)
-        self.optimizer = optim.Adam(self.model.parameters())
+        self.optimizer = optim.Adam(self.model.parameters(),lr=0.0001)
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -91,12 +91,12 @@ if __name__=='__main__':
     # print(state_size, action_size)
     
     agent = Agent(state_size, action_size)
-    agent.model.load_state_dict(torch.load('model_parameters.pth'))
+    # agent.model.load_state_dict(torch.load('model_parameters3.pth'))
 
     EPISODES = 500
     all_rewards = []
     state = env.reset()
-    for e in range(100):
+    for e in range(20):
         return_list = []
         with tqdm(total=int(EPISODES / 10), desc='Iteration %d' % e) as pbar:
             # state = env.reset()
@@ -125,11 +125,10 @@ if __name__=='__main__':
                         '%.3f' % np.mean(return_list[-10:])
                     })
                 pbar.update(1)
-                all_rewards+=return_list
+        all_rewards+=return_list
+
+        torch.save(agent.model.state_dict(), 'model_with_env5.pth')
         
-
-    torch.save(agent.model.state_dict(), 'model_parameters.pth')
-
     episodes_list = list(range(len(all_rewards)))
     plt.plot(episodes_list, all_rewards)
     plt.xlabel('Episodes')

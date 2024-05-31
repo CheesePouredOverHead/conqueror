@@ -49,8 +49,10 @@ class Card:
 
         if all(superpolygon.containsPoint(point, Qt.FillRule.OddEvenFill) for point in polygon):
             self.cansee=False
+            return 0
         else:
             self.cansee=True
+            return 1
 
 
 
@@ -79,6 +81,7 @@ class Card:
             for belows in self.below:
                 belows.up.remove(self)
             for card in pile.lst:
-                card.display()
+                if card!=None:
+                    card.display()
 
 

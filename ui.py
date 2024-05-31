@@ -55,7 +55,9 @@ class Setting:
 
         self.comboBox = QComboBox(self.w)
         self.comboBox.addItem("手动模式")
-        self.comboBox.addItem("自动模式")
+        self.comboBox.addItem("赋分算法")
+        self.comboBox.addItem('DQN')
+        self.comboBox.addItem('PPO')
         self.comboBox.setGeometry(QRect(50, 260, 101, 31))
 
         self.ok = QPushButton("ok",self.w)
@@ -86,8 +88,15 @@ class Setting:
     def convey4(self):
         if self.comboBox.currentText()=='手动模式':
             ai.work=False
-        else:
+        elif self.comboBox.currentText()=='赋分算法':
             ai.work=True
+            ai.method='greedy'
+        elif self.comboBox.currentText()=='DQN':
+            ai.work=True
+            ai.method='DQN'
+        elif self.comboBox.currentText()=='PPO':
+            ai.work=True
+            ai.method='PPO'
 
     def convey(self):
         self.convey1()
@@ -123,7 +132,12 @@ class Play:
         self.w.show()
         generate(self.w)
         if ai.work:
-            QTimer.singleShot(1000, ai.dqn_work)  # 延迟 1000 毫秒后调用 ai.greedy()
+            if ai.method=='greedy':
+                QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
+            if ai.method=='DQN':
+                QTimer.singleShot(1000, ai.dqn_work5)
+            if ai.method=='PPO':
+                QTimer.singleShot(1000, ai.ppo_work)
         self.app.exec()
 
     def win(self):

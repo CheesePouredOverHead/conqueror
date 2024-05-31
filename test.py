@@ -19,11 +19,12 @@ class test:
             stack.lst = []
             pile.lst = []
             pile.floor = 2
-            pile.cardnumber = [4, 8]
+            pile.cardnumber = [12,12]
             pile.setting = sum(pile.cardnumber)
             pile.inside = pile.setting
 
             ai.work = True
+            ai.method="DQN"
             begin = Play(app)
             self.w = begin.w
             pile.on_win = self.win

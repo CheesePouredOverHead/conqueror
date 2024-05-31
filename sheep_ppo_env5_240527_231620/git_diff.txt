@@ -1,0 +1,676 @@
+diff --git a/__pycache__/ai.cpython-311.pyc b/__pycache__/ai.cpython-311.pyc
+index 12e6fae..374b6f0 100644
+Binary files a/__pycache__/ai.cpython-311.pyc and b/__pycache__/ai.cpython-311.pyc differ
+diff --git a/__pycache__/card.cpython-311.pyc b/__pycache__/card.cpython-311.pyc
+index e07bff6..2108fee 100644
+Binary files a/__pycache__/card.cpython-311.pyc and b/__pycache__/card.cpython-311.pyc differ
+diff --git a/__pycache__/dqn.cpython-311.pyc b/__pycache__/dqn.cpython-311.pyc
+index a0455dd..4094445 100644
+Binary files a/__pycache__/dqn.cpython-311.pyc and b/__pycache__/dqn.cpython-311.pyc differ
+diff --git a/__pycache__/sheepenv.cpython-311.pyc b/__pycache__/sheepenv.cpython-311.pyc
+index 736d2c9..22aece2 100644
+Binary files a/__pycache__/sheepenv.cpython-311.pyc and b/__pycache__/sheepenv.cpython-311.pyc differ
+diff --git a/__pycache__/stack.cpython-311.pyc b/__pycache__/stack.cpython-311.pyc
+index c8e6ae3..92beded 100644
+Binary files a/__pycache__/stack.cpython-311.pyc and b/__pycache__/stack.cpython-311.pyc differ
+diff --git a/__pycache__/ui.cpython-311.pyc b/__pycache__/ui.cpython-311.pyc
+index 3e6eae2..8a25b3b 100644
+Binary files a/__pycache__/ui.cpython-311.pyc and b/__pycache__/ui.cpython-311.pyc differ
+diff --git a/ai.py b/ai.py
+index 695f77b..72f0a38 100644
+--- a/ai.py
++++ b/ai.py
+@@ -6,6 +6,11 @@ import torch
+ from gym.envs.registration import register
+ import numpy as np
+ from dqn import DQN
++from sheep_model import SheepModel
++from dqn3 import DQN as DQN3
++from dqn3 import Agent
++from model2 import SheepModel as SheepModel2
++
+ 
+ def copy_list(lst):
+     new_lst = []
+@@ -21,20 +26,26 @@ class AI:
+         self.work=False
+         self.on_going=True
+         self.model= DQN(32767,180)
+-        self.state_dict = torch.load("model_parameters.pth")
++        self.state_dict = torch.load("model_parameters3.pth")
+         self.model.load_state_dict(self.state_dict)
++        self.model2= Agent(7249,180)
++        self.model2.model.load_state_dict(torch.load('dqn_with_env4_rewardafter.pth'))
++        self.model4= SheepModel2()
++        ckpt = torch.load('sheep_ppo_env5_240526_223452\ckpt\ckpt_best.pth.tar', map_location='cpu')['model']
++        self.model4.load_state_dict(ckpt,strict=False)
++
+     
+     def greedy(self):
+-        self.can_move=[card for card in pile.lst if card.up==[]]
++        self.can_move=[card for card in pile.lst if card!=None and card.up==[]]
+         while self.can_move and self.on_going:
+-            self.can_see=[card for card in pile.lst if card.cansee]
++            self.can_see=[card for card in pile.lst if card!=None and card.can_see()]
+             score=[(self.score2(1,card,copy.copy(self.can_move),copy.copy(self.can_see),copy.deepcopy(stack.dic),stack.capacity-stack.inside),card) for card in self.can_move]
+             score.sort(reverse=True)
+             # print([(score,card.get_no()) for score,card in score])
+             score[0][1].move()
+             QApplication.processEvents()
+             # time.sleep(0.5)
+-            self.can_move=[card for card in pile.lst if card.up==[]]
++            self.can_move=[card for card in pile.lst if card!=None and card.up==[]]
+         
+ 
+     def score(self,card,canmove,cansee,dicc,rest):
+@@ -123,17 +134,17 @@ class AI:
+             else:
+                 self.card_num[i]=int(pile.lst[i].get_no())
+ 
+-        self.stack_positions = np.full(7, -1, dtype=np.int32)
++        stack_positions = np.full(7, -1, dtype=np.int32)
+         for i in range(stack.inside):
+-            self.stack_positions[i] = stack.lst[i].no
++            stack_positions[i] = stack.lst[i].no
+         for i in range(stack.inside, 7):
+-            self.stack_positions[i] = -1
++            stack_positions[i] = -1
+ 
+         return  {
+             "card_num": self.card_num,
+             "movable_cards": self.movable_cards,
+             "relation":self.relation,
+-            "stack_positions": self.stack_positions
++            "stack_positions": stack_positions
+         }
+     
+     def dqn_work(self):
+@@ -154,12 +165,142 @@ class AI:
+             legal_actions = [i for i in range(180) if observation['movable_cards'][i]==1]
+             act_values_legal = action_probs.clone().detach()
+             act_values_legal[[i for i in range(180) if i not in legal_actions]] = float('-inf')
++            # print(act_values_legal)
+             action = torch.argmax(act_values_legal).item()
+ 
+             pile.lst[action].move()
+             QApplication.processEvents()
+-        
+-            
++
++    def get_obs2(self):
++        self.inpile = np.full((180,5), 0, dtype=np.int32)
++        for i, card in enumerate(pile.lst):
++            self.inpile[i][0] = int(card.get_no())
++            self.inpile[i][1] = card.floor
++            self.inpile[i][2] = card.x
++            self.inpile[i][3] = card.y
++            if not card.up:
++                self.inpile[i][4] = 1
++            else:
++                self.inpile[i][4] = 0
++        for i in range(pile.inside,180):
++            self.inpile[i,0:4]=-1
++            self.inpile[i,4]=0
++
++        self.instack = np.full(7, -1, dtype=np.int32)
++        for i in range(stack.inside):
++            self.instack[i] = stack.lst[i].no
++        for i in range(stack.inside, 7):
++            self.instack[i] = -1
++
++        return {
++            "pile": self.inpile,
++            "stack": self.instack
++        }
++    
++    def get_obs4(self):
++        item_obs = np.zeros((180, 39))
++        action_mask = np.zeros(180).astype(np.uint8)
++
++        for i in range(pile.setting):
++            item = pile.lst[i]
++            if item is None:
++                item_obs[i][11] = 1
++            else:
++                if item.can_see():
++                    item_obs[i][item.no] = 1
++                    item_obs[i][12+(item.x-75)//25]=1
++                    item_obs[i][25+(item.y-15)//25]=1
++                    item_obs[i][38]=1
++                    if item.up==[]:
++                        item_obs[i][10]=1
++                        action_mask[i] = 1
++
++
++        stack_obs = np.zeros(3 * 10)
++        for i in stack.dic:
++            stack_obs[i*3+len(stack.dic[i])]=1
++
++        global_obs = np.zeros(19)
++        # print('inside',stack.inside)
++        # print(stack.lst)
++        global_obs[round(pile.inside/pile.setting)] = 1
++        global_obs[19 - stack.capacity - 1 + stack.inside] = 1
++
++        return {
++            'item_obs': item_obs,
++            'stack_obs': stack_obs,
++            'global_obs': global_obs,
++            'action_mask': action_mask,
++        }
++    
++    def dqn_work4(self):
++        while self.on_going:
++            observation = self.get_obs4()  
++            action=self.model2.choose_action(observation)
++
++            pile.lst[action].move()
++            QApplication.processEvents()
++
++    def ppo_work(self):
++        while self.on_going:
++            observation = self.get_obs5()  
++            # print(observation)
++            action = self.model4.compute_action(observation)
++
++            pile.lst[action].move()
++            QApplication.processEvents()
++
++    def get_obs5(self):
++        self.relation=np.zeros((180,180),dtype=np.float64)
++
++        for i in range(len(pile.lst)):
++            if pile.lst[i]!=None:
++                rect=pile.lst[i].btn.geometry()
++                for j in range(len(pile.lst)):
++                    if pile.lst[j]==None:
++                        continue
++                    if pile.lst[j].floor<pile.lst[i].floor:
++                        rect1=pile.lst[j].btn.geometry()
++                        if rect.intersects(rect1):
++                            self.relation[i][j]=-1
++                            self.relation[j][i]=1
++                            pile.lst[i].up.append(pile.lst[j])
++                            pile.lst[j].below.append(pile.lst[i])
++                            continue
++                    self.relation[i][j]=0
++                    self.relation[j][i]=0
++            else:
++                self.relation[i,:]=0
++                self.relation[:,i]=0
++
++        self.card_num=np.zeros((180,11),dtype=np.float64)
++        self.movable_cards = np.zeros(180, dtype=np.float64)
++        for i in range(pile.setting):
++            if pile.lst[i]!=None:
++                if pile.lst[i].up==[]:
++                    self.movable_cards[i] = 1
++                    self.card_num[i][int(pile.lst[i].get_no())]=1
++                else:
++                    self.movable_cards[i] = 0
++                    self.card_num[i][int(pile.lst[i].get_no())]=1
++            else:
++                self.movable_cards[i] = 0
++                self.card_num[10]=1
++        for i in range(pile.setting,180):
++            self.movable_cards[i] = 0
++            self.card_num[10]=1
++
++        self.stack_positions = np.full(30, 0, dtype=np.float64)
++        for key in stack.dic:
++            self.stack_positions[key*3+len(stack.dic[key])]=1
++
++        return  {
++            "card_num": self.card_num,
++            "movable_cards": self.movable_cards,
++            "relation":self.relation,
++            "stack_positions": self.stack_positions
++        }
++    
+             
+ ai=AI()
+ 
+diff --git a/card.py b/card.py
+index 9db85f8..0bd716c 100644
+--- a/card.py
++++ b/card.py
+@@ -49,8 +49,10 @@ class Card:
+ 
+         if all(superpolygon.containsPoint(point, Qt.FillRule.OddEvenFill) for point in polygon):
+             self.cansee=False
++            return 0
+         else:
+             self.cansee=True
++            return 1
+ 
+ 
+ 
+@@ -79,6 +81,7 @@ class Card:
+             for belows in self.below:
+                 belows.up.remove(self)
+             for card in pile.lst:
+-                card.display()
++                if card!=None:
++                    card.display()
+ 
+ 
+diff --git a/check.py b/check.py
+deleted file mode 100644
+index eada003..0000000
+--- a/check.py
++++ /dev/null
+@@ -1,41 +0,0 @@
+-import torch
+-import gym
+-from gym.envs.registration import register
+-import numpy as np
+-from sheepenv import SheepEnv
+-from dqn import DQN
+-
+-register(
+-    id="SheepEnv-v0",
+-    entry_point="sheepenv:SheepEnv",
+-    max_episode_steps=1000,
+-    reward_threshold=200,
+-)
+-# 创建你的环境
+-env = SheepEnv()  # 请替换为你的环境的实际创建语句
+-
+-
+-# 加载模型
+-model = DQN(32767,180)  # 请替换为你的模型类的实际创建语句
+-
+-# 加载状态字典
+-state_dict = torch.load("model_parameters.pth")
+-model.load_state_dict(state_dict)
+-
+-# 获取一个观察值
+-observation = env.reset()  # 请替换为你的观察值获取语句
+-part1 = torch.tensor(observation["card_num"])  # 请替换 'key1' 为你需要的键
+-part2 = torch.tensor(observation["movable_cards"])  # 请替换 'key2' 为你需要的键
+-part3 = torch.tensor(observation["relation"])
+-part4 = torch.tensor(observation["stack_positions"])
+-part3 = part3.view(-1)
+-# 将多个部分合并成一个张量
+-observation_tensor = torch.cat([part1, part2,part3,part4], dim=-1)
+-observation_tensor=observation_tensor.float()
+-
+-action_probs = model(observation_tensor)
+-
+-# 选择概率最高的动作
+-action = torch.argmax(action_probs).item()
+-
+-print(action)
+\ No newline at end of file
+diff --git a/dqn.py b/dqn.py
+index 0b0a92d..35537b9 100644
+--- a/dqn.py
++++ b/dqn.py
+@@ -21,9 +21,9 @@ register(
+ class DQN(nn.Module):
+     def __init__(self, state_size, action_size):
+         super(DQN, self).__init__()
+-        self.fc1 = nn.Linear(state_size, 24)
+-        self.fc2 = nn.Linear(24, 24)
+-        self.fc3 = nn.Linear(24, action_size)
++        self.fc1 = nn.Linear(state_size, 64)
++        self.fc2 = nn.Linear(64, 64)
++        self.fc3 = nn.Linear(64, action_size)
+ 
+     def forward(self, x):
+         x = torch.relu(self.fc1(x))
+@@ -34,13 +34,13 @@ class Agent:
+     def __init__(self, state_size, action_size):
+         self.state_size = state_size
+         self.action_size = action_size
+-        self.memory = deque(maxlen=2000)
+-        self.gamma = 0.95
+-        self.epsilon = 0.5
+-        self.epsilon_min = 0.01
++        self.memory = deque(maxlen=5000)
++        self.gamma = 0.9
++        self.epsilon = 0.9
++        self.epsilon_min = 0.0001
+         self.epsilon_decay = 0.995
+         self.model = DQN(state_size, action_size)
+-        self.optimizer = optim.Adam(self.model.parameters())
++        self.optimizer = optim.Adam(self.model.parameters(),lr=0.0001)
+ 
+     def remember(self, state, action, reward, next_state, done):
+         self.memory.append((state, action, reward, next_state, done))
+@@ -91,12 +91,12 @@ if __name__=='__main__':
+     # print(state_size, action_size)
+     
+     agent = Agent(state_size, action_size)
+-    agent.model.load_state_dict(torch.load('model_parameters.pth'))
++    agent.model.load_state_dict(torch.load('model_parameters3.pth'))
+ 
+     EPISODES = 500
+     all_rewards = []
+     state = env.reset()
+-    for e in range(100):
++    for e in range(10):
+         return_list = []
+         with tqdm(total=int(EPISODES / 10), desc='Iteration %d' % e) as pbar:
+             # state = env.reset()
+@@ -125,11 +125,10 @@ if __name__=='__main__':
+                         '%.3f' % np.mean(return_list[-10:])
+                     })
+                 pbar.update(1)
+-                all_rewards+=return_list
+-        
+-
+-    torch.save(agent.model.state_dict(), 'model_parameters.pth')
++        all_rewards+=return_list
+ 
++        torch.save(agent.model.state_dict(), 'model_parameters3.pth')
++        
+     episodes_list = list(range(len(all_rewards)))
+     plt.plot(episodes_list, all_rewards)
+     plt.xlabel('Episodes')
+diff --git a/model_parameters.pth b/model_parameters.pth
+index 83aa76d..555f4c0 100644
+Binary files a/model_parameters.pth and b/model_parameters.pth differ
+diff --git a/sheepenv.py b/sheepenv.py
+index 2eaf025..ae3d8c3 100644
+--- a/sheepenv.py
++++ b/sheepenv.py
+@@ -37,6 +37,7 @@ class SheepEnv(gym.Env):
+         self.stack=Stack(7)
+         self.pile=Pile()
+         self.pile.floor=random.randrange(2,7)
++        # self.pile.floor=2
+         self.app= QApplication(sys.argv)
+         self.play=Play(self.app)
+ 
+@@ -51,6 +52,9 @@ class SheepEnv(gym.Env):
+                 # print(self.pile.floor,self.pile.setting)
+                 break
+         # generate(self.play.w,self.pile)
++        # self.pile.setting=12
++        # self.pile.inside=self.pile.setting
++        # self.pile.cardnumber=[6,6]
+ 
+         cards=all_card(self.pile)
+         for floor in range(self.pile.floor,0,-1):
+@@ -119,7 +123,7 @@ class SheepEnv(gym.Env):
+             self._update_movable_cards()
+             self._update_stack_positions()
+             observation = self._get_observation()
+-            return observation, -100, False, False,{}
++            return observation, -1000, False, False,{}
+         else:
+             inside_record=self.stack.inside
+ 
+@@ -146,7 +150,11 @@ class SheepEnv(gym.Env):
+             self.relation[:,action]=0
+             # self.pile.judge()
+ 
+-            
++            inside_now=self.stack.inside
++            if inside_now<inside_record:
++                reward=50*0.5/(self.pile.setting//3)
++            else:
++                reward=0
+ 
+             if self.pile.inside==0:
+                 # self.done=True
+@@ -154,22 +162,18 @@ class SheepEnv(gym.Env):
+                 self._update_stack_positions()
+                 observation = self._get_observation()
+                 self.done=True
+-                return observation,50,True,False,{}
++                return observation,reward+50,True,False,{}
+             if self.stack.inside==self.stack.capacity:
+                 self._update_movable_cards()
+                 self._update_stack_positions()
+                 observation = self._get_observation()
+                 self.done=True
+-                return observation,-50,True,False,{}
+-            inside_now=self.stack.inside
++                return observation,reward-50,True,False,{}
++            
+             self._update_movable_cards()
+             self._update_stack_positions()
+             observation = self._get_observation()
+             
+-            if inside_now<inside_record:
+-                reward=30
+-            else:
+-                reward=(self.pile.setting-self.pile.inside)/self.pile.setting*10
+             return observation,reward,False,False,{}
+ 
+         
+@@ -181,6 +185,7 @@ class SheepEnv(gym.Env):
+         self.stack.lst=[]
+         self.pile.lst=[]
+         self.pile.floor=random.randrange(2,7)
++        # self.pile.floor=2
+         self.done=False
+         self.play.w.close()
+         self.play=None
+@@ -196,6 +201,9 @@ class SheepEnv(gym.Env):
+                 self.pile.inside=self.pile.setting
+                 break
+         # generate(self.play.w,self.pile)
++        # self.pile.setting=12
++        # self.pile.inside=self.pile.setting
++        # self.pile.cardnumber=[6,6]
+ 
+         cards=all_card(self.pile)
+         for floor in range(self.pile.floor,0,-1):
+diff --git a/stack.py b/stack.py
+index d40c967..2cd0655 100644
+--- a/stack.py
++++ b/stack.py
+@@ -54,7 +54,8 @@ class Pile:
+ 
+     def move(self,card):
+         self.inside-=1
+-        self.lst.remove(card)
++        lst=[other if card!=other else None for other in self.lst]
++        self.lst=lst
+         self.judge()
+         
+     def judge(self):
+@@ -62,7 +63,7 @@ class Pile:
+             self.on_win()
+     
+     def detect(self):
+-        for card in pile.lst:
++        for card in self.lst:
+             rect = card.btn.geometry()
+             for other in self.lst:
+                 if other.floor<card.floor:
+diff --git a/test.py b/test.py
+index 925d306..ac2f8a6 100644
+--- a/test.py
++++ b/test.py
+@@ -19,11 +19,12 @@ class test:
+             stack.lst = []
+             pile.lst = []
+             pile.floor = 2
+-            pile.cardnumber = [4, 8]
++            pile.cardnumber = [12,12]
+             pile.setting = sum(pile.cardnumber)
+             pile.inside = pile.setting
+ 
+             ai.work = True
++            ai.method="PPO"
+             begin = Play(app)
+             self.w = begin.w
+             pile.on_win = self.win
+@@ -57,5 +58,5 @@ class test:
+ if __name__ == '__main__':
+     app = QApplication(sys.argv)
+     test1 = test()
+-    test1.test(20, app)
++    test1.test(50, app)
+     app.exec()
+diff --git a/ui.py b/ui.py
+index 9cf9e9c..3a231eb 100644
+--- a/ui.py
++++ b/ui.py
+@@ -55,7 +55,9 @@ class Setting:
+ 
+         self.comboBox = QComboBox(self.w)
+         self.comboBox.addItem("手动模式")
+-        self.comboBox.addItem("自动模式")
++        self.comboBox.addItem("赋分算法")
++        self.comboBox.addItem('DQN')
++        self.comboBox.addItem('PPO')
+         self.comboBox.setGeometry(QRect(50, 260, 101, 31))
+ 
+         self.ok = QPushButton("ok",self.w)
+@@ -86,8 +88,15 @@ class Setting:
+     def convey4(self):
+         if self.comboBox.currentText()=='手动模式':
+             ai.work=False
+-        else:
++        elif self.comboBox.currentText()=='赋分算法':
++            ai.work=True
++            ai.method='greedy'
++        elif self.comboBox.currentText()=='DQN':
++            ai.work=True
++            ai.method='DQN'
++        elif self.comboBox.currentText()=='PPO':
+             ai.work=True
++            ai.method='PPO'
+ 
+     def convey(self):
+         self.convey1()
+@@ -123,7 +132,12 @@ class Play:
+         self.w.show()
+         generate(self.w)
+         if ai.work:
+-            QTimer.singleShot(1000, ai.dqn_work)  # 延迟 1000 毫秒后调用 ai.greedy()
++            if ai.method=='greedy':
++                QTimer.singleShot(1000, ai.greedy)  # 延迟 1000 毫秒后调用 ai.greedy()
++            if ai.method=='DQN':
++                QTimer.singleShot(1000, ai.dqn_work4)
++            if ai.method=='PPO':
++                QTimer.singleShot(1000, ai.ppo_work)
+         self.app.exec()
+ 
+     def win(self):
+diff --git "a/\350\257\276\347\250\213\346\212\245\345\221\212.md" "b/\350\257\276\347\250\213\346\212\245\345\221\212.md"
+index 58fc1fe..2298784 100644
+--- "a/\350\257\276\347\250\213\346\212\245\345\221\212.md"
++++ "b/\350\257\276\347\250\213\346\212\245\345\221\212.md"
+@@ -7,10 +7,114 @@
+ 
+ # 方案设计
+ 使用面向对象编程搭建环境。
+-ai方案采用贪心算法，建立价值评估函数对每步选择不同牌进行评分，选择最高分的卡片。
+-对价值评估函数进行优化，通过递归实现综合后三步选定最优解。
++ai方案有三种：赋分算法（我也不知道怎么取名）、DQN和PPO。
++## 赋分算法
++主体采用贪心算法，即为每种可能选择进行打分，最后选择得分最高的一张牌进行移动。
++单张牌的评分规则如下：
++- 在暂存区空位不止一个的情况下：
++    - 暂存区已有两张同号牌，选择即可消除，得10分
++    - 卡牌区能点的同号牌不少于3张，得6分
++    - 到下一步一定可以消除，得4分
++    - 其余情况0分
++- 暂存区只有一个空位：（保命原则）
++    - 马上消除得10分
++    - 其余情况0分
++但是仅仅依靠但张牌赋分选择表现不佳，于是我设计了综合后三步的赋分plus算法：
++- 每一步的得分是这一步得分乘以权重，加上下一步得分的所有情况的最大值
++- 采用递归实现，步数==3或暂存区满则返回
++- 因为如果每步权重相同，则可能出现“方案A第三步能消，分数最高，所以此时选择牌a；但是下一轮赋分时方案B得分更高”这种朝令夕改最后什么都消不掉的情况，所以设置第一步权重1，第二步权重0.7，第三步权重0.5，鼓励马上消除
++
++这种算法的实战表现非常好，基本上可以破解各种场景，但由于计算量大，在牌多的时候算得慢
++## DQN算法
++Q-Learning是一种基于值的强化学习算法，目的是找到一个策略，使得在给定状态下的期望累积奖励最大化。Q值函数Q(s, a)表示在状态s采取动作a时的期望累积奖励。
++深度Q-学习（Deep Q-learning）是一个利用深度卷积神经网络来进行Q-学习的算法。在使用非线性函数逼近的时候，强化学习经常会有不稳定性或者发散性：这种不稳定性来于当前的观测中有比较强的自相关。DQN通过使用经历回放，也就是每次学习的时候并不直接从最近的经历中学习，而是从之前的经历中随机采样来进行训练。
++
++DQN算法步骤：
++
++1. 初始化经验回放记忆池
++2. 初始化行为Q网络和目标Q网络，参数相同
++3. 重复以下步骤（对于每一轮训练）：
++   1. 根据当前状态选择动作（ε-贪婪策略）
++   2. 执行动作，观察奖励和新状态
++   3. 将经验（状态，动作，奖励，新状态）存入记忆池
++   4. 从记忆池中随机采样一个小批量的经验
++   5. 计算目标Q值： 
++      \[
++      y = \begin{cases} 
++      r & \text{如果终止状态} \\ 
++      r + \gamma \max_{a'} Q'(s', a') & \text{如果非终止状态}
++      \end{cases}
++      \]
++   6. 更新行为Q网络，最小化均方误差：
++      \[
++      L = \mathbb{E}[(y - Q(s, a))^2]
++      \]
++   7. 每隔C步，将行为Q网络的参数复制到目标网络
++   
++代码参考https://hrl.boyuai.com/chapter/2/dqn%E7%AE%97%E6%B3%95/
++
++## PPO算法
++PPO（Proximal Policy Optimization）是一种改进的策略优化算法，用于提高强化学习中的样本效率和训练稳定性。
++步骤如下：
++1. 收集样本：
++   通过与环境交互，使用当前策略 \( \pi_\theta \) 收集一批状态、动作、奖励和下一状态的数据。
++
++2. 计算优势函数：
++   使用优势函数估计方法（如GAE）计算每个时间步的优势值 \( \hat{A}_t \)。
++   \[
++   \hat{A}_t = \delta_t + (\gamma \lambda) \delta_{t+1} + (\gamma \lambda)^2 \delta_{t+2} + \dots
++   \]
++   其中 \( \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t) \)。
++
++3. 计算损失函数：
++   计算剪切损失函数 \( L^{CLIP}(\theta) \)。在每次更新中，通过限制策略变化的比例来确保更新的稳定性。
++   \[
++   L^{CLIP}(\theta) = \mathbb{E} \left[ \min \left( r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1 - \epsilon, 1 + \epsilon) \hat{A}_t \right) \right]
++   \]
++   其中 \( r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \)。
++
++4. 策略优化：
++   使用随机梯度上升方法优化损失函数。一般会执行多次小步更新来替代一次大步更新，以进一步提高稳定性。
++
++5. 策略更新：
++   用优化后的参数更新策略，并重复上述步骤。
++
++在具体实现中，训练使用了[DI-engine](https://github.com/opendilab/DI-engine?tab=readme-ov-file)的PPO Policy
+ 
+ # 代码模块的功能划分与描述
++结构概览：
++```text
++基础实现：
++ai.py ->AI类，相当于一个agent
++card.py ->Card类
++stack.py ->Stack类（暂存区类）和Pile类（卡牌区类）
++generate.py ->生成牌局
++main.py ->进入游戏的入口
++ui.py ->ui界面
++test.py ->测胜率的
++
++gym环境:
++sheepenv.py
++sheepenv2.py
++sheepenv4.py
++sheepenv5.py
++
++dqn训练：
++dqn.py
++dqn2.py
++dqn3.py
++rl_utils.py ->训练依赖的一个包，从《动手学强化学习》下的
++... .pth ->储存的训练好的模型
++
++ppo训练：
++ppo.py __
++ppo2.py _|->进行训练的代码
++sheep_model.py __
++model2.py _______|->模型（agent）的类
++sheep_ppo... ->文件夹，储存ppo训练的模型和日志
++
++```
++
+ ## Card 类（卡片类）
+ - `self.no`:该牌号码
+ - `self.x` `self.y`:该牌坐标

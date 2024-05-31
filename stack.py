@@ -54,7 +54,8 @@ class Pile:
 
     def move(self,card):
         self.inside-=1
-        self.lst.remove(card)
+        lst=[other if card!=other else None for other in self.lst]
+        self.lst=lst
         self.judge()
         
     def judge(self):
@@ -62,7 +63,7 @@ class Pile:
             self.on_win()
     
     def detect(self):
-        for card in pile.lst:
+        for card in self.lst:
             rect = card.btn.geometry()
             for other in self.lst:
                 if other.floor<card.floor:

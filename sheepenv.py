@@ -37,6 +37,7 @@ class SheepEnv(gym.Env):
         self.stack=Stack(7)
         self.pile=Pile()
         self.pile.floor=random.randrange(2,7)
+        # self.pile.floor=2
         self.app= QApplication(sys.argv)
         self.play=Play(self.app)
 
@@ -51,6 +52,9 @@ class SheepEnv(gym.Env):
                 # print(self.pile.floor,self.pile.setting)
                 break
         # generate(self.play.w,self.pile)
+        # self.pile.setting=12
+        # self.pile.inside=self.pile.setting
+        # self.pile.cardnumber=[6,6]
 
         cards=all_card(self.pile)
         for floor in range(self.pile.floor,0,-1):
@@ -119,7 +123,7 @@ class SheepEnv(gym.Env):
             self._update_movable_cards()
             self._update_stack_positions()
             observation = self._get_observation()
-            return observation, -100, False, False,{}
+            return observation, -1000, False, False,{}
         else:
             inside_record=self.stack.inside
 
@@ -146,7 +150,11 @@ class SheepEnv(gym.Env):
             self.relation[:,action]=0
             # self.pile.judge()
 
-            
+            inside_now=self.stack.inside
+            if inside_now<inside_record:
+                reward=50*0.5/(self.pile.setting//3)
+            else:
+                reward=0
 
             if self.pile.inside==0:
                 # self.done=True
@@ -154,22 +162,18 @@ class SheepEnv(gym.Env):
                 self._update_stack_positions()
                 observation = self._get_observation()
                 self.done=True
-                return observation,50,True,False,{}
+                return observation,reward+50,True,False,{}
             if self.stack.inside==self.stack.capacity:
                 self._update_movable_cards()
                 self._update_stack_positions()
                 observation = self._get_observation()
                 self.done=True
-                return observation,-50,True,False,{}
-            inside_now=self.stack.inside
+                return observation,reward-50,True,False,{}
+            
             self._update_movable_cards()
             self._update_stack_positions()
             observation = self._get_observation()
             
-            if inside_now<inside_record:
-                reward=30
-            else:
-                reward=(self.pile.setting-self.pile.inside)/self.pile.setting*10
             return observation,reward,False,False,{}
 
         
@@ -181,6 +185,7 @@ class SheepEnv(gym.Env):
         self.stack.lst=[]
         self.pile.lst=[]
         self.pile.floor=random.randrange(2,7)
+        # self.pile.floor=2
         self.done=False
         self.play.w.close()
         self.play=None
@@ -196,6 +201,9 @@ class SheepEnv(gym.Env):
                 self.pile.inside=self.pile.setting
                 break
         # generate(self.play.w,self.pile)
+        # self.pile.setting=12
+        # self.pile.inside=self.pile.setting
+        # self.pile.cardnumber=[6,6]
 
         cards=all_card(self.pile)
         for floor in range(self.pile.floor,0,-1):

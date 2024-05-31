@@ -10,6 +10,13 @@
     ```bash
     pip install PyQt6
     ```
+   训练过程依赖DI-engine，gym,pytorch,如果需要自己训练，可以使用以下命令安装：
+    ```bash
+    pip install DI-engine
+    pip install torch torchvision torchaudio
+    pip install gym
+    ```
+
 3. 下载全部源文件。
 ## 使用
 1. 运行`main.py`。
@@ -19,13 +26,13 @@
      cd 项目文件夹
      python main.py
      ```
-2. 自定义设置。
+1. 自定义设置。
    - 设定暂存区容量（推荐7），不超过10.
-   - 设定层数（1-6），超过6可能溢出屏幕。
+   - 设定层数。
    - 设定每层牌数量。
-   - 选择模式。
+   - 选择模式。(效果：赋分>PPO>DQN)
    - 点击确定。
-3. 开始游戏！
+2. 开始游戏！
    - 手动模式：点击卡牌进行选择。
    - 自动模式：不需要操作。
-4. 游戏结束。按退出键退出。
+3. 游戏结束。按退出键退出。
