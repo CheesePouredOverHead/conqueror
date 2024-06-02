@@ -6,7 +6,7 @@ from ding.torch_utils import Transformer, MLP, unsqueeze, to_tensor
 
 class ItemEncoder(nn.Module):
     """
-    用于对物品进行编码的模块。
+    用于对复杂obs进行编码的模块。
 
     Args:
         item_obs_size (int): 物品观测空间的大小，默认为11。

@@ -1,0 +1,16 @@
+diff --git a/__pycache__/ai.cpython-311.pyc b/__pycache__/ai.cpython-311.pyc
+index 341bf3a..a71dc7f 100644
+Binary files a/__pycache__/ai.cpython-311.pyc and b/__pycache__/ai.cpython-311.pyc differ
+diff --git a/test.py b/test.py
+index 334fdb4..997a885 100644
+--- a/test.py
++++ b/test.py
+@@ -24,7 +24,7 @@ class test:
+             pile.inside = pile.setting
+ 
+             ai.work = True
+-            ai.method="DQN"
++            ai.method="PPO"
+             begin = Play(app)
+             self.w = begin.w
+             pile.on_win = self.win

@@ -6,14 +6,15 @@
 
 ## 安装
 1. 本项目使用python 3.11.4,不确定在此版本以下能否正常运行。
-2. 本项目依赖 PyQt6 库。可以使用以下命令来安装 PyQt6：
+2. 本项目依赖 PyQt6,pytorch,NumPy 库。可以使用以下命令来安装 PyQt6：
     ```bash
     pip install PyQt6
+    pip install torch torchvision torchaudio
+    pip install numpy
     ```
-   训练过程依赖DI-engine，gym,pytorch,如果需要自己训练，可以使用以下命令安装：
+   训练过程依赖DI-engine,gym，如果需要自己训练，可以使用以下命令安装：
     ```bash
     pip install DI-engine
-    pip install torch torchvision torchaudio
     pip install gym
     ```
 
@@ -34,5 +35,5 @@
    - 点击确定。
 2. 开始游戏！
    - 手动模式：点击卡牌进行选择。
-   - 自动模式：不需要操作。
+   - 其他模式：不需要操作。
 3. 游戏结束。按退出键退出。

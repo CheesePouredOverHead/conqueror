@@ -1,0 +1,177 @@
+7e38bb8
+
+commit 7e38bb8f434160710907398940b7fd17fd48344f
+Author: CheesePouredOverHead <thtooong@gmail.com>
+Date:   Sat Jun 1 00:21:29 2024 +0800
+
+    差不多了，生日快乐！！！
+
+ .idea/.gitignore                                   |    3 +
+ .idea/inspectionProfiles/profiles_settings.xml     |    6 +
+ .idea/misc.xml                                     |    4 +
+ .idea/modules.xml                                  |    8 +
+ .idea/sheep-elimination.iml                        |    8 +
+ .idea/vcs.xml                                      |    6 +
+ README.md                                          |   17 +-
+ __pycache__/ai.cpython-311.pyc                     |  Bin 12772 -> 21198 bytes
+ __pycache__/bsl.cpython-311.pyc                    |  Bin 0 -> 3036 bytes
+ __pycache__/card.cpython-311.pyc                   |  Bin 6191 -> 6218 bytes
+ __pycache__/dqn.cpython-311.pyc                    |  Bin 10528 -> 10404 bytes
+ __pycache__/dqn2.cpython-311.pyc                   |  Bin 0 -> 10007 bytes
+ __pycache__/dqn3.cpython-311.pyc                   |  Bin 0 -> 11584 bytes
+ __pycache__/dqn4.cpython-311.pyc                   |  Bin 0 -> 11814 bytes
+ __pycache__/model2.cpython-311.pyc                 |  Bin 0 -> 13201 bytes
+ __pycache__/modelcopy.cpython-311.pyc              |  Bin 0 -> 8286 bytes
+ __pycache__/ppo.cpython-311.pyc                    |  Bin 0 -> 11107 bytes
+ __pycache__/sheep_model.cpython-311.pyc            |  Bin 0 -> 8284 bytes
+ __pycache__/sheepenv.cpython-311.pyc               |  Bin 17856 -> 17809 bytes
+ __pycache__/sheepenv2.cpython-311.pyc              |  Bin 0 -> 14674 bytes
+ __pycache__/sheepenv3.cpython-311.pyc              |  Bin 0 -> 15948 bytes
+ __pycache__/sheepenv4.cpython-311.pyc              |  Bin 0 -> 12714 bytes
+ __pycache__/sheepenv5.cpython-311.pyc              |  Bin 0 -> 20073 bytes
+ __pycache__/stack.cpython-311.pyc                  |  Bin 5863 -> 6059 bytes
+ __pycache__/ui.cpython-311.pyc                     |  Bin 12945 -> 13903 bytes
+ ai.py                                              |  170 +-
+ card.py                                            |    5 +-
+ check.py                                           |   41 -
+ dqn.py                                             |   27 +-
+ dqn2.py                                            |  145 ++
+ dqn3.py                                            |  160 ++
+ dqn4.py                                            |  192 ++
+ model2.py                                          |  241 +++
+ model_parameters.pth                               |  Bin 3168674 -> 0 bytes
+ model_with_env5.pth                                |  Bin 0 -> 8921368 bytes
+ ppo.py                                             |  127 ++
+ ppo2.py                                            |  144 ++
+ sheep_model.py                                     |  126 ++
+ .../ckpt/ckpt_best.pth.tar                         |  Bin 0 -> 6472778 bytes
+ .../ckpt/iteration_0.pth.tar                       |  Bin 0 -> 6473490 bytes
+ .../formatted_total_config.py                      |  152 ++
+ sheep_ppo_env5_240527_231620/git_diff.txt          |  676 +++++++
+ sheep_ppo_env5_240527_231620/git_log.txt           |  128 ++
+ .../log/collector/collector_logger.txt             | 1376 +++++++++++++
+ .../log/evaluator/evaluator_logger.txt             |  636 ++++++
+ .../log/learner/learner_logger.txt                 | 1755 +++++++++++++++++
+ .../events.out.tfevents.1716822981.Commander-Owl   |  Bin 0 -> 323042 bytes
+ sheep_ppo_env5_240527_231620/total_config.py       |  144 ++
+ .../ckpt/ckpt_best.pth.tar                         |  Bin 0 -> 6472778 bytes
+ .../ckpt/iteration_0.pth.tar                       |  Bin 0 -> 6473490 bytes
+ .../ckpt/iteration_10000.pth.tar                   |  Bin 0 -> 6474914 bytes
+ .../formatted_total_config.py                      |  152 ++
+ sheep_ppo_env5_240528_233555/git_diff.txt          |  759 +++++++
+ sheep_ppo_env5_240528_233555/git_log.txt           |  128 ++
+ .../log/collector/collector_logger.txt             | 1664 ++++++++++++++++
+ .../log/evaluator/evaluator_logger.txt             |  724 +++++++
+ .../log/learner/learner_logger.txt                 | 2078 ++++++++++++++++++++
+ .../events.out.tfevents.1716910557.Commander-Owl   |  Bin 0 -> 393892 bytes
+ sheep_ppo_env5_240528_233555/total_config.py       |  144 ++
+ sheepenv.py                                        |   26 +-
+ sheepenv2.py                                       |  236 +++
+ sheepenv4.py                                       |  192 ++
+ sheepenv5.py                                       |  284 +++
+ stack.py                                           |    5 +-
+ test.py                                            |    3 +-
+ ui.py                                              |   20 +-
+ ...257\276\347\250\213\346\212\245\345\221\212.md" |  326 ++-
+ 67 files changed, 12933 insertions(+), 105 deletions(-)
+
+commit 0f777c3c20b4a9a2ea43d629252889202f0b1007
+Author: CheesePouredOverHead <thtooong@gmail.com>
+Date:   Fri May 3 15:49:14 2024 +0800
+
+    dqn蠢得令人绝望，但好歹能跑
+
+ __pycache__/ai.cpython-311.pyc       | Bin 7386 -> 12772 bytes
+ __pycache__/card.cpython-311.pyc     | Bin 6132 -> 6191 bytes
+ __pycache__/dqn.cpython-311.pyc      | Bin 0 -> 10528 bytes
+ __pycache__/generate.cpython-311.pyc | Bin 2699 -> 2796 bytes
+ __pycache__/rl_utils.cpython-311.pyc | Bin 0 -> 7241 bytes
+ __pycache__/sheepenv.cpython-311.pyc | Bin 13831 -> 17856 bytes
+ __pycache__/ui.cpython-311.pyc       | Bin 12979 -> 12945 bytes
+ ai.py                                |  83 ++++++++++++++-
+ card.py                              |   3 +-
+ check.py                             |  41 ++++++++
+ checkenv.py                          |   6 --
+ dqn.py                               | 145 +++++++++++++++++++++++++++
+ generate.py                          |   5 +-
+ model_parameters.pth                 | Bin 0 -> 3168674 bytes
+ rl_utils.py                          |  90 +++++++++++++++++
+ sheepenv.py                          | 189 ++++++++++++++++++++++++-----------
+ test.py                              |   4 +-
+ ui.py                                |  10 +-
+ 18 files changed, 503 insertions(+), 73 deletions(-)
+
+commit def3fe4400c682818255cc167330d8b88fcaa2fa
+Author: CheesePouredOverHead <thtooong@gmail.com>
+Date:   Mon Apr 15 00:16:48 2024 +0800
+
+    写了个不知道能不能用但是至少没有保存的环境，但是不显示ui，不知道为什么
+
+ __pycache__/ai.cpython-311.pyc                     | Bin 7623 -> 7386 bytes
+ __pycache__/generate.cpython-311.pyc               | Bin 2742 -> 2699 bytes
+ __pycache__/sheepenv.cpython-311.pyc               | Bin 0 -> 13831 bytes
+ __pycache__/stack.cpython-311.pyc                  | Bin 5830 -> 5863 bytes
+ __pycache__/ui.cpython-311.pyc                     | Bin 13027 -> 12979 bytes
+ ai.py                                              |   6 +-
+ checkenv.py                                        |   6 +
+ generate.py                                        |   6 +-
+ sheepenv.py                                        | 203 +++++++++++++++++++++
+ stack.py                                           |   1 +
+ ui.py                                              |   6 +-
+ ...257\276\347\250\213\346\212\245\345\221\212.md" |   2 +-
+ 12 files changed, 219 insertions(+), 11 deletions(-)
+
+commit 23ab45385e53db256e090ca5fd681f0a9c9e7e0c
+Author: CheesePouredOverHead <thtooong@gmail.com>
+Date:   Thu Apr 4 15:27:37 2024 +0800
+
+    策略应该比较聪明了
+
+ README.md                                          |   2 +-
+ __pycache__/ai.cpython-311.pyc                     | Bin 0 -> 7623 bytes
+ __pycache__/card.cpython-311.pyc                   | Bin 0 -> 6132 bytes
+ __pycache__/generate.cpython-311.pyc               | Bin 0 -> 2742 bytes
+ __pycache__/stack.cpython-311.pyc                  | Bin 0 -> 5830 bytes
+ __pycache__/ui.cpython-311.pyc                     | Bin 0 -> 13027 bytes
+ ai.py                                              |  63 +++++++++++++--------
+ card.py                                            |   1 -
+ generate.py                                        |   4 +-
+ stack.py                                           |   1 -
+ test.py                                            |   8 +--
+ ui.py                                              |  26 +--------
+ ...257\276\347\250\213\346\212\245\345\221\212.md" |   4 +-
+ 13 files changed, 50 insertions(+), 59 deletions(-)
+
+commit 05c3e62dbd7fbbfafd04c64247e6c693dbfae84c
+Author: CheesePouredOverHead <thtooong@gmail.com>
+Date:   Tue Apr 2 20:14:11 2024 +0800
+
+    收拾文件夹
+
+ .gitignore                                             |   2 --
+ .../README.md" => README.md                            |   0
+ .../ai.py" => ai.py                                    |   0
+ .../card.py" => card.py                                |   0
+ .../generate.py" => generate.py                        |   0
+ .../main.py" => main.py                                |   0
+ sEvents()                                              |  17 -----------------
+ .../stack.py" => stack.py                              |   0
+ .../test.py" => test.py                                |   0
+ .../ui.py" => ui.py                                    |   0
+ .../__pycache__/ai.cpython-311.pyc"                    | Bin 6495 -> 0 bytes
+ .../__pycache__/ai.cpython-312.pyc"                    | Bin 4963 -> 0 bytes
+ .../__pycache__/card.cpython-311.pyc"                  | Bin 6142 -> 0 bytes
+ .../__pycache__/card.cpython-312.pyc"                  | Bin 5672 -> 0 bytes
+ .../__pycache__/choose.cpython-311.pyc"                | Bin 6885 -> 0 bytes
+ .../__pycache__/generate.cpython-311.pyc"              | Bin 2704 -> 0 bytes
+ .../__pycache__/generate.cpython-312.pyc"              | Bin 2259 -> 0 bytes
+ .../__pycache__/hello.cpython-311.pyc"                 | Bin 4052 -> 0 bytes
+ .../__pycache__/judge.cpython-311.pyc"                 | Bin 1594 -> 0 bytes
+ .../__pycache__/main.cpython-311.pyc"                  | Bin 1824 -> 0 bytes
+ .../__pycache__/stack.cpython-311.pyc"                 | Bin 5840 -> 0 bytes
+ .../__pycache__/stack.cpython-312.pyc"                 | Bin 4917 -> 0 bytes
+ .../__pycache__/test.cpython-311.pyc"                  | Bin 3397 -> 0 bytes
+ .../__pycache__/ui.cpython-311.pyc"                    | Bin 13093 -> 0 bytes
+ .../__pycache__/ui.cpython-312.pyc"                    | Bin 12233 -> 0 bytes
+ ...350\257\276\347\250\213\346\212\245\345\221\212.md" |   0
+ 26 files changed, 19 deletions(-)

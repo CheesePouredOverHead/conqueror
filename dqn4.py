@@ -14,7 +14,7 @@ from model2 import SheepModel
 
 register(
     id="SheepEnv-v0",
-    entry_point="sheepenv5:SheepEnv",
+    entry_point="sheepenv6:SheepEnv",
     max_episode_steps=1000,
     reward_threshold=200,
 )
@@ -175,7 +175,7 @@ if __name__=='__main__':
                 pbar.update(1)
         all_rewards+=return_list
 
-        torch.save(agent.model.state_dict(), 'model_with_env5.pth')
+        torch.save(agent.model.state_dict(), 'model_with_env6.pth')
         
     episodes_list = list(range(len(all_rewards)))
     plt.plot(episodes_list, all_rewards)

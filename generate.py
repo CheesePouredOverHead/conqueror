@@ -3,6 +3,16 @@ from stack import pile
 import random
 
 def generate(w):
+    """
+    生成所有card对象。
+
+    参数：
+    w (int)：所在的qwidgit
+
+    返回：
+    无
+
+    """
     cards=all_card(pile)
     for floor in range(pile.floor,0,-1):
         if floor%2==1:
@@ -18,6 +28,16 @@ def generate(w):
         card.display()
             
 def all_card(pile):
+    """
+    生成所有card的号码。
+
+    参数：
+    pile (Pile)：一个Pile对象。
+    
+    返回：
+    lst: 包含所有card号码的列表。
+
+    """
     n = pile.setting 
 
     lst = []

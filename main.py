@@ -1,7 +1,6 @@
 import sys
 from ui import Setting,Play
 from stack import stack,pile
-from generate import *
 from PyQt6.QtWidgets import QApplication
 
 
